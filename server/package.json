@@ -1,0 +1,25 @@
+{
+  "name": "ichat",
+  "version": "0.0.1",
+  "description": "chat app buid with socket.io",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chat",
+    "socket.io",
+    "websocket"
+  ],
+  "author": "pengwenbin7@126.com",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cookie": "^0.3.1",
+    "express": "^4.15.2",
+    "ini": "^1.3.4",
+    "mysql": "^2.13.0",
+    "socket.io": "^1.7.3",
+    "winston": "^2.3.1"
+  }
+}

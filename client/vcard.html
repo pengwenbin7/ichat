@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>访客</title>
+    <link href="static/semantic.min.css" rel="stylesheet">
+    <link href="static/style.css" rel="stylesheet">
+    <script>
+    // 重命名 Electron 提供的 require
+    window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;
+    </script>
+  </head>
+  <body>
+
+    <div class="ui large top fixed menu transition inverted">
+      <div class="ui container">
+	<a href="index.html" class="item">访客</a>
+	<a href="vcard.html" class="item active">名片</a>
+	<a href="history.html" class="item">历史</a>
+	<a href="setting.html" class="item">设置</a>
+	<a href="#" class="exit item">退出</a>
+      </div>
+    </div>
+
+    <div class="ui main">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+    </div>
+
+    <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/semantic-ui/2.2.9/semantic.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      const {ipcRenderer} = nodeRequire("electron");
+      $("a.exit").click(function() {
+	ipcRenderer.sendSync("exit");
+      });
+    });
+    </script>
+  </body>
+</html>

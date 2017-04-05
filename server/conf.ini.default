@@ -1,0 +1,15 @@
+;; 数据库配置
+[db]
+host = 127.0.0.1
+database = iChat
+user = root
+password = root
+
+
+[log]
+;; 日志
+dir = ./logs/
+
+[resource]
+;; 上传文件目录
+dir = ./tmp/

@@ -1,0 +1,42 @@
+#+HTML_HEAD: <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+#+HTML_HEAD: <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+#+HTML_HEAD: <link rel="stylesheet" href="https://pengwenbin7.github.io/static/css/article.css">
+#+HTML_HEAD: <script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+#+HTML_HEAD: <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+#+HTML_HEAD: <script src="https://pengwenbin7.github.io/static/js/article.js"></script>
+#+OPTIONS: ^:{} 
+#+OPTIONS: _:{}
+#+AUTHOR: [[mailto:pengwenbin7@126.com][pengwenbin7]]
+#+TITLE: ichat 使用说明
+
+* 安装
+#+BEGIN_SRC 
+npm install
+#+END_SRC
+
+* 配置
+修改 =conf.ini= 文件，各项意义见 =conf.ini.default= 注释
+
+* 运行
+#+BEGIN_SRC 
+node app.js
+#+END_SRC
+
+* 消息说明
+按照发出者，消息分为服务端发出的(Server)和客户端发出的(Client)两种
+** Server
+| key     | 意义             | 必须                          | 可选值                                              |
+| type    | 消息类型         | 是                            | broadcast-系统消息, info-用户信息, message-组内消息 |
+| from    | 此消息原始发出者 | 当type为message必须，否则忽略 | 用户ID                                              |
+| time    | timestamp        | 是                            | "yyyy-m-d H:i:s"格式的时间信息                      |
+| content | 消息主体         | 是                            |                                                     |
+
+** Client
+| key     | 意义         | 必须                         | 可选值                                                          |
+| type    | 消息类型     | 是                           | auth-认证信息, message-组内消息, update-文件上传, change-更改组 |
+| group   | 更改所在组   | 当type为change必须，否则忽略 | 组ID,适用于当一个用户属于多个组                                 |
+| from    | 发出者ID     | 当type为auth必须，否则忽略   | 用户ID                                                          |
+| mime    | 上传文件类型 | 当type为update必须，否则忽略 | 文件的mime-type(text/plain, image/png, etc...)                  |
+| key     | 认证密钥     | 当type为auth必须，否则忽略   | ecos系统生成                                                    |
+| time    | timestamp    | 是                           | 13位unix timestamp                                              |
+| content | 消息主体     | 是                           |                                                                 |

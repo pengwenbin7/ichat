@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+    <link href="static/semantic.min.css" rel="stylesheet">
+    <script>
+    // 重命名 Electron 提供的 require
+    window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;
+    </script>
+    <style>
+    body {
+      background-color: #DADADA;
+    }
+
+    .main {
+      width: 450px;
+      height: 270px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    form {
+      width: 80%;
+    }
+
+    .option {
+      display: flex;
+      justify-content: space-between;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="ui main center">
+      <form action="#" method="POST" class="ui form">
+	<div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+	    <input autofocus class="name" name="name" type="text" required placeholder="邮箱/用户名/邮箱">
+          </div>
+        </div>
+	<div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+	    <input class="password" name="password" type="password" required placeholder="密码">
+          </div>
+        </div>
+	<p class="option">
+	  <label><input type="checkbox" name="remeber">记住密码</label>
+	  <label><input type="checkbox" name="autologin">自动登陆</label>
+	</p>
+	<p class="option">
+	  <span class="err"></span>
+	  <a href="#">忘记密码</a>
+	</p>
+	
+	<button type="submit" class="ui fluid large teal submit button">登陆</button>
+      </form>
+    </div>
+
+    <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/semantic-ui/2.2.9/semantic.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+      const {ipcRenderer} = nodeRequire("electron");
+      $("form").submit(function() {
+	var name = $("input.name").val().trim();
+	var password = $("input.password").val().trim();
+	console.log(ipcRenderer.sendSync("login", {
+	  name: name,
+	  password: password
+	}));
+      });
+    });
+    </script>
+  </body>
+</html>
