@@ -5,7 +5,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const Datastore = require("nedb");
 const conf = require(path.join(__dirname, "conf.json"));
-var socket = require("socket.io-client")("http://localhost:3000");
+var socket = require("socket.io-client")("http://192.168.188.107:3333");
 
 socket.on("connect", () => {
   console.log("connected");

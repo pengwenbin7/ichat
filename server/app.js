@@ -2,33 +2,21 @@
 
 // instance a socket.io server
 const fs = require("fs");
-const bodyParser = require("body-parser");
-const app = require("express")();
-const http = require("http").Server(app);
+//const bodyParser = require("body-parser");
+const http = require("http").createServer();
 const io = require("socket.io")(http);
-const vIo = require("socket.io")(http);
+//const vIo = require("socket.io")(http);
 const ini = require("ini");
 const crypto = require("crypto");
 
 const PORT = 3000;
-const PORT_VISITOR = 3333;
+//const PORT_VISITOR = 3333;
 
 var conf = ini.parse(fs.readFileSync(__dirname + "/conf.ini", "utf-8"));
 const db = require(__dirname + "/src/db.js")(conf.db);
 const logger = require(__dirname + "/src/log.js");
 const log  = logger.log(conf.log);
 
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.get("/", (req, res) => {
-  res.send("Hello express\r\n");
-});
-
-app.post("/login", (req, res) => {
-  console.log(req.body.a, req.body.b);
-  res.send("welcome login\r\n");
-});
 
 // client id to user name
 var cid2name = new Map();
@@ -81,6 +69,11 @@ io.on("connection", function(cli) {
       client.to(room).send(info);
       client.send(info);
     });
+  });
+
+  client.on("visitorLogin", (data) => {
+    id = data.id;
+    rid = data.rid;
   });
 
   client.on("change", (data) => {
@@ -185,16 +178,15 @@ io.on("connection", function(cli) {
   });
 });
 
+/*
 vIo.on("connection", function(client) {
   visitorList[client.id] = client;
 });
+*/
 
 // listen ports
 http.listen(PORT, () => {
   console.log("listening on*:", PORT);
-});
-http.listen(PORT_VISITOR, () => {
-  console.log("listening on*:", PORT_VISITOR);
 });
 
 // hash digest, default algo is "sha1"
