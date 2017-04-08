@@ -7,11 +7,18 @@ const Datastore = require("nedb");
 const conf = require(path.join(__dirname, "conf.json"));
 var socket = require("socket.io-client")("http://192.168.188.107:3333");
 
+var sqlite3 = require('sqlite3').verbose();
+var sqdb = new sqlite3.Database("./sqlite3.db");
+sqdb.run("INSERT INTO lorem (info) values ('hello sqlite3')");
+
 socket.on("connect", () => {
-  console.log("connected");
+  socket.emit("csLogin", {
+    id: 10010,
+    name: "chinaTel",
+  });
 });
 
-socket.on("event", (data) => {
+socket.on("message", (data) => {
   console.log(data);
 });
 
@@ -34,6 +41,14 @@ ipcMain.on("login", (event, arg) => {
   } else {
     event.returnValue = access;
   }
+});
+
+ipcMain.on("sendMsg", (event, arg) => {
+  var msg = {
+    content: arg
+  }
+  socket.send(msg);
+  event.returnValue = null;
 });
 
 ipcMain.on("saveMessage", (event, arg) => {
@@ -107,6 +122,7 @@ function mainWindow() {
 
 app.on("ready", () => {
   if (conf.autologin) {
+
     mainWindow();
   } else {
     loginWindow();

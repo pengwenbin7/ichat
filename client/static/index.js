@@ -8,11 +8,16 @@ $(document).ready(function() {
     content: "奥在希拉里的尽可能"
   };
   console.log(ipcRenderer.sendSync("saveMessage", msg));
-  
+
   $("a.exit").click(function() {
     ipcRenderer.sendSync("exit");
   });
 
+  $("button.send").click(() => {
+    var html = $("pre").html();
+    ipcRenderer.sendSync("sendMsg", html);
+  });
+  
   $("#card .submit").click(function() {
     var card = {};
     card.name = $("#card .name").val();

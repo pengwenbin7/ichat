@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title>访客</title>
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/style.css" rel="stylesheet">
     <script>
     // 重命名 Electron 提供的 require
@@ -14,47 +14,49 @@
     </script>
   </head>
   <body>
-
     <div class="container">
-      <ul class="nav">
+      <ul class="nav nav-tabs">
 	<li><a href="index.html" class="active">访客</a></li>
 	<li><a href="vcard.html" class="">名片</a></li>
 	<li><a href="history.html" class="">历史</a></li>
 	<li><a href="setting.html" class="">设置</a></li>
 	<li><a href="#" class="exit">退出</a></li>
       </ul>
-    </div>
 
-    <div class="">
-      <div id="visitor">
-	游客列表
-      </div>
-      <div class="column" id="chat">
-	<div class="content"></div>
-	<div class="editor">
-	  <div class="emoji"></div>
-	  <div class="input">
-	    <pre contenteditable></pre>
-	    <div>
-	      <span class="tip"></span>
-	      <button class="send">发送</button>
+      <div class="">
+	<div id="visitor">
+	  游客列表
+	</div>
+	<div class="column" id="chat">
+	  <div class="content"></div>
+	  <div class="editor">
+	    <div class="emoji"></div>
+	    <div class="input">
+	      <pre contenteditable></pre>
+	      <div>
+		<span class="tip"></span>
+		<button class="send">发送</button>
+	      </div>
 	    </div>
 	  </div>
 	</div>
-      </div>
-      <div class="form">
-	<input class="name" placeholder="" type="text">
-	<input class="company" placeholder="" type="text">
-	<input class="phone" placeholder="" type="text">
-	<input class="note" placeholder="" type="text">
-	<button class="submit button">保存</button>
+	<div id="card" class="form">
+	  姓名<input class="name" placeholder="" type="text">
+	  公司<input class="company" placeholder="" type="text">
+	  电话<input class="phone" placeholder="" type="text">
+	  备注<input class="note" placeholder="" type="text">
+	  <button class="submit button">保存</button>
+	</div>
       </div>
     </div>
 
     <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- <script src="http://cdn.bootcss.com/socket.io/1.7.3/socket.io.min.js"></script> -->
 
     <script src="static/index.js"></script>
+    <script>
+
+    </script>
   </body>
 </html>

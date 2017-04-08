@@ -2,7 +2,8 @@
   "devDependencies": {
     "electron": "^1.6.2",
     "electron-builder": "^16.6.0",
-    "electron-rebuild": "^1.5.7"
+    "electron-rebuild": "^1.5.7",
+    "sqlite3": "^3.1.8"
   },
   "name": "chat-client",
   "version": "1.0.0",
@@ -159,7 +160,6 @@
     "yauzl": "^2.4.1"
   },
   "scripts": {
-    "rebuild": "electron-rebuild -f -w sqlite3",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "pengwenbin7@126.com",

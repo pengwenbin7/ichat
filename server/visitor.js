@@ -3,34 +3,41 @@
 // instance a socket.io server
 const fs = require("fs");
 const http = require("http").createServer();
-const io = require("socket.io-client")(http);
+const io = require("socket.io")(http);
 const ini = require("ini");
 const crypto = require("crypto");
 const request = require("request");
-
+const nedb = require("nedb");
+const path = require("path");
 const PORT = 3333;
-
-var conf = ini.parse(fs.readFileSync(__dirname + "/conf.ini", "utf-8"));
+const conf = ini.parse(fs.readFileSync(__dirname + "/conf.ini", "utf-8"));
 const db = require(__dirname + "/src/db.js")(conf.db);
 const logger = require(__dirname + "/src/log.js");
 const log  = logger.log(conf.log);
-
-var waitList = new Array();
-var csList = new Array();
 const types = ["cs", "visitor"];
-var type;
-var room;
-var id;
-var name;
+
+var waitList = new Map();
+var csList = new Map();
+var cacheList = new Map();
 
 io.on("connection", function(client) {
 
-  var ip = client.handshake.address.slice(7);
+  let type;
+  let room;
+  let id;
+  let name;
+  let rid;
+  let onChat = null;
+
   // customer service login
   client.on("csLogin", (data) => {
     id = data.id;
+    room = client.id;
     name = data.name;
-    csList[client.id] = data;
+    csList.set(client.id, {
+      id: id,
+      name: name
+    });
     type = types[0];
 
     var info = {
@@ -41,19 +48,80 @@ io.on("connection", function(client) {
     client.send(info);
   });
 
+  // update room
+  client.on("updateRoom", (newRoom) => {
+    room = newRoom;
+  });
+
   // visitor login
   client.on("visitorLogin", () => {
+    var ip = client.handshake.address.slice(7);
+    //ipInfo(ip).then((info) => {});
     id = ip2long(ip);
-    ipInfo(ip).then((info) => {
-      name = info;
-    });
+    name = ip;
     type = types[1];
     room = client.id;
+    rid = id;
+    
+    waitList.set(client.id, {
+      id: id,
+      name: name,
+      type: type,
+      room: room
+    });
+    console.log(waitList);
+    console.log(csList);
+  });
+
+  client.on("message", (data) => {
+    var time = logger.timeFormat();
+    var msg = {
+      type: "message",
+      from: name,
+      time: time,
+      content: data.content
+    };
+    db.query("insert into sdb_im_message (`from`, `to`, `type`, `content`, `time`) values (?, ?, ?, ?, ?)", [id, rid, "text", data.content, new Date(time).getTime() * 1 / 1000]);
+    client.send(msg);
+    if (onChat) {
+      // send message to customer service
+      client.to(room).send(msg);
+    } else {
+      // save message
+      cacheMsg(room, msg);
+      fetchMsg(room);
+    }
+  });
+
+  client.on("bin", (data, fn) => {
+    var time = logger.timeFormat();
+    var file = conf.resource.dir + data.name;
+    fs.writeFile(file, data.content, (err) => {
+      if (err) {
+	log.error(err);
+	fn(err);
+      } else {
+	var fileUri = '<a href="' + conf.resource.prefix + data.name + '">' + data.name + '</a>';
+	var msg = {
+	  type: "message",
+	  from: name,
+	  time: time,
+	  content: fileUri
+	};
+	db.query("insert into sdb_im_message (`from`, `to`, `type`, `content`, `time`) values (?, ?, ?, ?, ?)", [id, rid, "bin", fileUri, new Date(time).getTime() * 1 / 1000]);
+	client.to(room).send(msg);
+	client.send(msg);
+      }
+    });
   });
 
   // close connection
   client.on("disconnect", function() {
-    //
+    if (waitList.has(client.id)) {
+      waitList.delete(client.id);
+    } else if (csList.has(client.id)) {
+      csList.delete(client.id);
+    }
   });
 });
 
@@ -77,8 +145,9 @@ function ip2long(ip) {
 }
 
 function ipInfo(ip) {
+  /*
   var option = {
-    uri: "http://ip.taobao.com/service/getIpInfo.php?ip=" + "121.227.39.6",
+    uri: "http://ip.taobao.com/service/getIpInfo.php?ip=" + ip,
     json: true
   };
   return new Promise((resolve, reject) => {
@@ -87,4 +156,31 @@ function ipInfo(ip) {
       resolve(info);
     });
   });
+  */
+  return ip;
+}
+
+function cacheMsg(room, msg) {
+  var cache;
+  if (cacheList.has(room)) {
+    cache = cacheList.get(room);
+  } else {
+    cache = new nedb({ filename: path.join(__dirname, "cache", room), autoload: true });
+    cacheList.set(room, cache);
+  }
+  cache.insert(msg);
+}
+
+function fetchMsg(room) {
+  var cache;
+  if (cacheList.has(room)) {
+    cache = cacheList.get(room);
+    cache.find({}, (err, docs) => {
+      console.log(docs);
+      cacheList.delete(room);
+      fs.unlinkSync(path.join(__dirname, "cache", room));
+    });
+  } else {
+    return false;
+  }
 }

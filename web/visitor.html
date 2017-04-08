@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <title>访客</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <!--[if lt IE 9]>
+    <p class="browsehappy">
+    你正在使用一个<strong>过时</strong>的浏览器。请<a class="link" href="http://browsehappy.com" target="_blank">升级你的浏览器</a>。
+    </p>
+    <![endif]-->
+    <audio class="msg">
+      <source src="sound/msg.mp3" type="audio/mpeg">
+    </audio>
+    <audio class="system">
+      <source src="sound/system.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="all">
+      <div id="main">
+	<div class="chatArea">
+	  <div class="chatHeader">
+	    <span class="visitor-name">等待客服...</span>
+	  </div>
+	  <div class="chatContent container" id="dropbox">
+	    <div class="tip tip-box">
+	      在等待客服连接过程中请不要关闭本窗口，否则客服无法回复您的留言。<br>
+	      您可以拖入文件到此区域直接发送。
+	    </div>
+	  </div>
+	  <div class="chatTool">
+	    <img class="emoji-pop" src="images/emoji/smile.png">
+	    <input class="hidden" type="file" value="" multiple="multiple">
+	    <img class="emoji emoji-file" src="images/emoji/file_folder.png">
+	    <div class="emoji-box">
+	      <div class="emoji-row">
+		<img class="emoji" src="images/emoji/smile.png">
+		<img class="emoji" src="images/emoji/blush.png">
+		<img class="emoji" src="images/emoji/cry.png">
+		<img class="emoji" src="images/emoji/joy.png">
+		<img class="emoji" src="images/emoji/angry.png">
+		<img class="emoji" src="images/emoji/scream.png">
+	      </div>
+	      <div class="emoji-row">
+		<img class="emoji" src="images/emoji/ok_hand.png">
+		<img class="emoji" src="images/emoji/heavy_exclamation_mark.png">
+		<img class="emoji" src="images/emoji/+1.png">
+		<img class="emoji" src="images/emoji/-1.png">
+		<img class="emoji" src="images/emoji/heavy_check_mark.png">
+		<img class="emoji" src="images/emoji/x.png">
+	      </div>
+	      <div class="emoji-row">
+		<img class="emoji" src="images/emoji/stuck_out_tongue.png">
+		<img class="emoji" src="images/emoji/stuck_out_tongue_closed_eyes.png">
+		<img class="emoji" src="images/emoji/stuck_out_tongue_winking_eye.png">
+		<img class="emoji" src="images/emoji/sunglasses.png">
+		<img class="emoji" src="images/emoji/sweat.png">
+		<img class="emoji" src="images/emoji/anguished.png">
+	      </div>
+	      <div class="emoji-row">
+		<img class="emoji" src="images/emoji/heart_eyes.png">
+		<img class="emoji" src="images/emoji/hankey.png">
+		<img class="emoji" src="images/emoji/frog.png">
+		<img class="emoji" src="images/emoji/e-mail.png">
+		<img class="emoji" src="images/emoji/dog.png">
+		<img class="emoji" src="images/emoji/chicken.png">
+	      </div>
+	    </div>
+	  </div>
+	  <div class="chatInput">
+	    <pre contenteditable="true" id="editor"></pre>
+	  </div>
+	  <div class="inputAction">
+	    <span class="tip">Ctrl + Enter发送消息</span>
+	    <button class="send btn btn-success">发送</button>
+	  </div>
+
+	</div>
+      </div>
+    </div>
+
+    <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://cdn.bootcss.com/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="static/main.js"></script>
+    <script src="static/emoji.js"></script>
+  </body>
+</html>
