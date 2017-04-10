@@ -40,12 +40,8 @@ io.on("connection", function(client) {
     });
     type = types[0];
 
-    var info = {
-      type: "info",
-      content: waitList,
-      time: logger.timeFormat()
-    };
-    client.send(info);
+    console.log("emit waitList", waitList);
+    client.emit("waitList", "list:...");
   });
 
   // update room
@@ -81,7 +77,7 @@ io.on("connection", function(client) {
       time: time,
       content: data.content
     };
-    db.query("insert into sdb_im_message (`from`, `to`, `type`, `content`, `time`) values (?, ?, ?, ?, ?)", [id, rid, "text", data.content, new Date(time).getTime() * 1 / 1000]);
+    db.query("insert into sdb_im_message (`from`, `to`, `type`, `content`, `time`) values (?, ?, ?, ?, ?)", [id, id, "text", data.content, new Date(time).getTime() * 1 / 1000]);
     client.send(msg);
     if (onChat) {
       // send message to customer service

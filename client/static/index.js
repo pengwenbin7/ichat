@@ -1,21 +1,21 @@
 $(document).ready(function() {
   const {ipcRenderer} = nodeRequire("electron");
-
-  var msg = {
-    time: new Date().getTime(),
-    from: "徐iqaa",
-    to: "哦奥利",
-    content: "奥在希拉里的尽可能"
-  };
-  console.log(ipcRenderer.sendSync("saveMessage", msg));
-
+  
   $("a.exit").click(function() {
     ipcRenderer.sendSync("exit");
   });
 
+  ipcRenderer.on("newMessage", (event, msg) => {
+    console.log(msg);
+  });
+
   $("button.send").click(() => {
     var html = $("pre").html();
-    ipcRenderer.sendSync("sendMsg", html);
+    var msg = {
+      time: new Date().getTime(),
+      content: html
+    };
+    ipcRenderer.sendSync("sendMsg", msg);
   });
   
   $("#card .submit").click(function() {
@@ -25,9 +25,11 @@ $(document).ready(function() {
     card.phone = $("#card .phone").val();
     card.note = $("#card .note").val();
     if (ipcRenderer.sendSync("saveCard", card)) {
-      alert("成功保存名片");
+      alert("保存失败");
     } else {
-      alert("已存在，保存失败");
+      alert("成功保存名片");
+      $("#card input").val("");
+      $("#card .name").focus();
     }
   });
 });

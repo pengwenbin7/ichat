@@ -5,20 +5,32 @@ const fs = require("fs");
 const crypto = require("crypto");
 const Datastore = require("nedb");
 const conf = require(path.join(__dirname, "conf.json"));
-var socket = require("socket.io-client")("http://192.168.188.107:3333");
+var socket = require("socket.io-client")("http://localhost:3333");
 
-var sqlite3 = require('sqlite3').verbose();
-var sqdb = new sqlite3.Database("./sqlite3.db");
-sqdb.run("INSERT INTO lorem (info) values ('hello sqlite3')");
+// 保持一个对于 window 对象的全局引用，如果你不这样做，
+// 当 JavaScript 对象被垃圾回收， window 会被自动地关闭
+let loginWin;
+let win;
+let userName;
+let userId;
+let room = null;
+
+const db = new Datastore({filename: path.join(__dirname, "message", date()), autoload: true});
+const cardDb = new Datastore({filename: path.join(__dirname, "vcard.db"), autoload: true});
 
 socket.on("connect", () => {
+  console.log("connected");
   socket.emit("csLogin", {
-    id: 10010,
-    name: "chinaTel",
+    id: userId,
+    name: userName
   });
 });
 
 socket.on("message", (data) => {
+  win.webContents.send("newMessage", data);
+});
+
+socket.on("waitList", (data) => {
   console.log(data);
 });
 
@@ -26,12 +38,7 @@ socket.on("disconnect", () => {
   console.log("disconnect");
 });
 
-// 保持一个对于 window 对象的全局引用，如果你不这样做，
-// 当 JavaScript 对象被垃圾回收， window 会被自动地关闭
-let loginWin;
-let win;
 
-var db = new Datastore({filename: path.join(__dirname, "message", "message.db"), autoload: true});
 
 ipcMain.on("login", (event, arg) => {
   var access = validate(arg.name, arg.password);
@@ -43,11 +50,15 @@ ipcMain.on("login", (event, arg) => {
   }
 });
 
+ipcMain.on("updateRoom", (event, arg) => {
+  room = arg;
+});
+
 ipcMain.on("sendMsg", (event, arg) => {
-  var msg = {
-    content: arg
-  }
-  socket.send(msg);
+  arg.from = userId;
+  arg.to = room;
+  socket.send(arg);
+  console.log(arg);
   event.returnValue = null;
 });
 
@@ -58,13 +69,10 @@ ipcMain.on("saveMessage", (event, arg) => {
 });
 
 ipcMain.on("saveCard", (event, arg) => {
-  var file = path.join(__dirname, "vcard", crypto.createHash("md5").update(arg.name + arg.company + arg.phone).digest("hex"));
-  if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, JSON.stringify(arg));
-    event.returnValue = true;
-  } else {
-    event.returnValue = false;
-  }
+  cardDb.insert(arg, (err) => {
+    console.log(err);
+    event.returnValue = err;
+  });
 });
 
 ipcMain.on("exit", (event, arg) => {
@@ -109,7 +117,7 @@ function mainWindow() {
   win.loadURL(url.format({
     pathname: path.join(__dirname, "index.html"),
     protocol: "file:",
-    slashes: true
+    slashes: true,
   }));
 
   // devtools
@@ -122,7 +130,8 @@ function mainWindow() {
 
 app.on("ready", () => {
   if (conf.autologin) {
-
+    userId = conf.id;
+    userName = conf.name;
     mainWindow();
   } else {
     loginWindow();
@@ -141,3 +150,15 @@ app.on("activate", () => {
     mainWindow();
   }
 });
+
+function date() {
+  var d = new Date();
+  var y = String(d.getFullYear());
+  var m = d.getMonth() + 1;
+  var day = d.getDate();
+
+  m = m < 10 ? "0" + m : String(m);
+  day = day < 10 ? "0" + day : String(day);
+
+  return y + "-" + m + "-" + day;
+}
